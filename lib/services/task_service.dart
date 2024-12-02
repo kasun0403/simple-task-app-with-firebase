@@ -35,6 +35,16 @@ class TaskService {
         .toList());
   }
 
+  Future<void> updateTask(TaskModel task) async {
+    try {
+      final Map<String, dynamic> data = task.toJson();
+      //update the task
+      await _taskCollection.doc(task.id).update(data);
+    } catch (e) {
+      print("Error updating task $e");
+    }
+  }
+
   Future<void> deleteTask(String id) async {
     try {
       //delete task from firebase

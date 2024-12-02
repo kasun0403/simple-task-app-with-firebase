@@ -52,6 +52,52 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  //open botttom sheet
+  void _showBottomSheet(TaskModel task) {
+    _taskController.text = task.name;
+
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _taskController,
+                    decoration: const InputDecoration(
+                      hintText: "Enter the task name",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                          borderSide: BorderSide(color: Colors.purple)),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                      onPressed: () async {
+                        task.name = _taskController.text;
+                        task.updateAt = DateTime.now();
+                        task.isUpdated = true;
+
+                        await TaskService().updateTask(task);
+                        _taskController.clear();
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("Update Task"))
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,6 +151,9 @@ class _HomePageState extends State<HomePage> {
                         await TaskService().deleteTask(task.id);
                       },
                     ),
+                    onTap: () {
+                      _showBottomSheet(task);
+                    },
                   ),
                 );
               },
